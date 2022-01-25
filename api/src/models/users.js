@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const {isEmail} = require('validator')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 
 const userSchema = new mongoose.Schema({
     nombre: {
@@ -26,6 +27,26 @@ userSchema.pre('save', async function(next){
     this.password = hashedPass
     next()
 })
+
+userSchema.methods.token = async function() {
+    const user = this
+    const token = jwt.sign( {id: user._id.toString()}, 'mimegaclave', {expiresIn: '1d' } ) // payload, pass, options
+    console.log(jwt.verify(token, 'mimegaclave'))
+    return token
+}
+
+userSchema.statics.authenticate = async (email, pass) => {
+    const query = await userModel.find({ email })
+
+    if(query){
+        console.log('argumento', pass)
+        console.log('password DB', query[0].password)
+        const hashQuery = await bcrypt.compare(pass, query[0].password)
+        if(hashQuery) return query
+        else throw new Error('Wrong password')
+    }
+    else throw new Error('The mail doesnt exist in the DB')
+}
 
 const userModel = mongoose.model('user', userSchema)
 

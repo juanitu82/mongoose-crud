@@ -1,7 +1,10 @@
 const express = require('express')
 const router = express.Router()
 const usersRoutes = require('./users')
+const taskRoutes = require('./tasks')
 
-router.use(usersRoutes)
+router.use('/users', usersRoutes)
+
+router.use('/tasks', taskRoutes)
 
 module.exports = router
