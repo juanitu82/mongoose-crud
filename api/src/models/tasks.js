@@ -10,9 +10,14 @@ const taskSchema = new mongoose.Schema({
         type: Boolean,
         required: true,
         default: false
+    },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     }
 })
 
-const tasksModel = mongoose.model('task', taskSchema);
+const tasksModel = mongoose.model('Task', taskSchema);
 
 module.exports = tasksModel

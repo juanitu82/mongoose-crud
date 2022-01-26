@@ -19,7 +19,12 @@ const userSchema = new mongoose.Schema({
         type: String,
         minLength: 6,
         required: [true, 'Your password must have a minimum length of 6 chars']
-    }
+    },
+    tasks: [{  
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Task', 
+        required: true 
+    }]
 });
 
 userSchema.pre('save', async function(next){
@@ -31,7 +36,6 @@ userSchema.pre('save', async function(next){
 userSchema.methods.token = async function() {
     const user = this
     const token = jwt.sign( {id: user._id.toString()}, 'mimegaclave', {expiresIn: '1d' } ) // payload, pass, options
-    console.log(jwt.verify(token, 'mimegaclave'))
     return token
 }
 
@@ -39,8 +43,7 @@ userSchema.statics.authenticate = async (email, pass) => {
     const query = await userModel.find({ email })
 
     if(query){
-        console.log('argumento', pass)
-        console.log('password DB', query[0].password)
+      
         const hashQuery = await bcrypt.compare(pass, query[0].password)
         if(hashQuery) return query
         else throw new Error('Wrong password')
@@ -48,6 +51,6 @@ userSchema.statics.authenticate = async (email, pass) => {
     else throw new Error('The mail doesnt exist in the DB')
 }
 
-const userModel = mongoose.model('user', userSchema)
+const userModel = mongoose.model('User', userSchema)
 
 module.exports = userModel

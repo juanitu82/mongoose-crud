@@ -4,6 +4,7 @@ const getTaskById = require('../controllers/tasks/getTaskById')
 const createTask = require('../controllers/tasks/createTask')
 const updateTask = require('../controllers/tasks/updateTask')
 const deleteTask = require('../controllers/tasks/deleteTask')
+const auth = require('../middlewares/auth')
 
 const router = Router()
 
@@ -11,7 +12,7 @@ router.get('/', getTasks)
 
 router.get('/:id', getTaskById)
 
-router.post('/create', createTask )
+router.post('/create', auth, createTask )
 
 router.put('/update/:id', updateTask)
 
